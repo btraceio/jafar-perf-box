@@ -40,8 +40,12 @@ HANDSHAKE = [
 ]
 
 
-def server_tools(command, timeout):
-    """Returns the set of tool names the MCP server advertises."""
+def server_tools(command, timeout, server_info):
+    """Returns the set of tool names the MCP server advertises.
+
+    Also fills `server_info` from the handshake. Note that a server older than 0.27.0 reports a
+    hardcoded 0.10.0 there regardless of its real version, so treat it as a label, not a fact.
+    """
     stdin = "".join(json.dumps(m) + "\n" for m in HANDSHAKE)
     try:
         proc = subprocess.run(command, input=stdin, capture_output=True, text=True,
@@ -63,6 +67,10 @@ def server_tools(command, timeout):
             msg = json.loads(line)
         except json.JSONDecodeError:
             continue
+        if msg.get("id") == 1 and "result" in msg:
+            info = msg["result"].get("serverInfo") or {}
+            server_info["name"] = info.get("name", "?")
+            server_info["version"] = info.get("version", "?")
         if msg.get("id") == 2 and "result" in msg:
             return {t["name"] for t in msg["result"].get("tools", [])}
     sys.exit("no tools/list response found in the server's output")
@@ -100,8 +108,10 @@ def main():
     root = pathlib.Path(args.root).resolve()
 
     print(f"asking the server for its tools: {command}", flush=True)
-    available = server_tools(command, args.timeout)
-    print(f"server exposes {len(available)} tools\n", flush=True)
+    server_info = {}
+    available = server_tools(command, args.timeout, server_info)
+    label = f"{server_info.get('name', '?')} {server_info.get('version', '?')}"
+    print(f"server exposes {len(available)} tools (reported as {label})\n", flush=True)
 
     referenced = referenced_tools(root)
     missing = {name: locs for name, locs in referenced.items() if name not in available}
@@ -112,8 +122,15 @@ def main():
             print(f"  {name}")
             for loc in missing[name]:
                 print(f"      {loc}")
-        print("\nEither the tool was renamed or removed in btraceio/jafar and the skill needs")
-        print("updating, or the name is a typo. Both send an agent to a call that will fail.")
+        print("\nThree things cause this, in rough order of likelihood:")
+        print()
+        print("  1. This repository is ahead of the published server — the tool exists in")
+        print("     btraceio/jafar but is not in a release yet. Release it, or hold the skill")
+        print("     back until it is. Nothing here is wrong; the two are just out of step.")
+        print("  2. The tool was renamed or removed upstream, and the skill needs updating.")
+        print("  3. The name is a typo.")
+        print()
+        print("In all three cases an agent following that skill makes a call that fails.")
         return 1
 
     print(f"OK — all {len(referenced)} referenced tools exist on the server.")
