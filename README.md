@@ -8,6 +8,11 @@ A Claude Code plugin marketplace for the [Jafar](https://github.com/btraceio/jaf
 /plugin install jafar-perf@btraceio
 ```
 
+Two names, because they name two different things: **`jafar-perf-box`** is this repository, which is
+the *marketplace*, and **`jafar-perf`** is the *plugin* inside it. `@btraceio` is the marketplace's
+name as declared in `.claude-plugin/marketplace.json`, not the GitHub organisation. So you add the
+repository and install the plugin.
+
 This repository is deliberately small — a few hundred kilobytes of Markdown. Adding a marketplace
 clones its repository, so the plugin lives here rather than in the Jafar source tree, which carries
 several megabytes of binary test recordings that a plugin user has no use for.
