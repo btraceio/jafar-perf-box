@@ -1,0 +1,13 @@
+{
+  "name": "jafar-perf-box",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Jafar JVM performance-analysis skills and MCP server, packaged for the pi coding agent.",
+  "license": "Apache-2.0",
+  "repository": "https://github.com/btraceio/jafar-perf-box",
+  "keywords": ["pi-package"],
+  "pi": {
+    "skills": ["./plugins/jafar-perf/skills"],
+    "mcp": "./plugins/jafar-perf/.mcp.json"
+  }
+}

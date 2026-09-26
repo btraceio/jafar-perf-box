@@ -28,6 +28,26 @@ The plugin bundles `.mcp.json`, so installing it also registers the `jafar` MCP 
 (`jbang jfr-mcp@btraceio --stdio`). [JBang](https://www.jbang.dev) must be on your PATH; it fetches
 the server on first use. No separate `claude mcp add` is needed.
 
+## Using it with pi
+
+The same skills and MCP server also install into the [pi](https://pi.dev) coding agent. The root
+`package.json` makes this repository a pi package: its `pi` key points at the plugin's `skills/`
+and its `.mcp.json`, so both harnesses read one copy of each.
+
+```
+pi install npm:pi-mcp-adapter
+pi install git:github.com/btraceio/jafar-perf-box
+```
+
+pi has no built-in MCP support; the MCP server needs the third-party
+[pi-mcp-adapter](https://github.com/nicobailon/pi-mcp-adapter) extension. The adapter exposes the
+server's tools through its `mcp` proxy tool (`mcp({ tool: "jfr_open", args: {...} })`) rather than
+as individual tools, and it names the server `jafar-perf-box__jafar`. The skills name tools by their
+bare names, which the proxy resolves. The seven agents are Claude Code subagents and do not load in
+pi, which has no subagent support of its own.
+
+Jafar's own installer (`install.sh` in btraceio/jafar) runs both commands for you.
+
 ## Keeping the skills honest
 
 The skills name MCP tools and their parameters explicitly. Nothing in Jafar's test suite knows this
