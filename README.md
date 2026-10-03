@@ -1,5 +1,23 @@
 # jafar-perf-box
 
+> **This repository has moved and is archived.** The `jafar-perf` plugin now lives in
+> [btraceio/agent-plugins](https://github.com/btraceio/agent-plugins), alongside the other btraceio
+> agent plugins, and is maintained there. Switch to it:
+>
+> ```
+> /plugin marketplace remove btraceio
+> /plugin marketplace add btraceio/agent-plugins
+> /plugin install jafar-perf@btraceio-agent-plugins
+> ```
+>
+> pi users: `pi remove git:github.com/btraceio/jafar-perf-box`, then
+> `pi install git:github.com/btraceio/agent-plugins`. Or re-run Jafar's installer
+> (`curl -Ls https://raw.githubusercontent.com/btraceio/jafar/main/install.sh | bash`), which
+> moves both Claude Code and pi installs over for you.
+>
+> The plugin is unchanged apart from starting the server with `--attach` (one shared daemon instead
+> of one JVM per session). What follows describes the archived layout.
+
 A Claude Code plugin marketplace for the [Jafar](https://github.com/btraceio/jafar) JFR / heap dump
 / profile analysis toolkit.
 
